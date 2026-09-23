@@ -1,3 +1,240 @@
-blablabla
-dadadadadad
-dadadadadad
+/* ===========================================================
+   Laboratorio: Arreglos, Funciones y Objetos
+   Completa cada TODO. Prueba cada función con console.log
+   antes de avanzar a la siguiente parte.
+   =========================================================== */
+
+/* ---------------- PARTE 1: ARREGLOS ---------------- */
+
+const inventario = ["teclado", "mouse", "monitor", "audífonos"];
+
+function agregarItems(arr, alInicio, alFinal) {
+  return [alInicio, ...arr, alFinal];
+}
+
+const temperaturas = [18, 22, 25, 30, 15, 19, 27];
+
+function aFahrenheit(arr) {
+  return arr.map(function (c) {
+    return (c * 9) / 5 + 32;
+  });
+}
+
+function diasCalurosos(arr, umbral) {
+  return arr.filter(function (t) {
+    return t > umbral;
+  });
+}
+
+function promedio(arr) {
+  const suma = arr.reduce(function (acc, n) {
+    return acc + n;
+  }, 0);
+  return suma / arr.length;
+}
+
+function temperaturaMaxima(arr) {
+  return arr.reduce(function (max, n) {
+    if (n > max) {
+      return n;
+    }
+    return max;
+  }, arr[0]);
+}
+
+function buscarPrimerMayorA(arr, valor) {
+  return arr.find(function (n) {
+    return n > valor;
+  });
+}
+
+function ordenarDescendente(arr) {
+  const copia = [...arr];
+  copia.sort(function (a, b) {
+    return b - a;
+  });
+  return copia;
+}
+
+console.log("aFahrenheit:", aFahrenheit(temperaturas));
+console.log("diasCalurosos(>20):", diasCalurosos(temperaturas, 20));
+console.log("promedio:", promedio(temperaturas));
+console.log("temperaturaMaxima:", temperaturaMaxima(temperaturas));
+console.log("buscarPrimerMayorA(>26):", buscarPrimerMayorA(temperaturas, 26));
+console.log("buscarPrimerMayorA(>100):", buscarPrimerMayorA(temperaturas, 100));
+console.log("ordenarDescendente:", ordenarDescendente(temperaturas));
+console.log("temperaturas sin cambiar:", temperaturas);
+
+
+/* ---------------- PARTE 2: FUNCIONES ---------------- */
+
+function procesarLista(arr, accion) {
+  const resultado = [];
+  for (let i = 0; i < arr.length; i++) {
+    resultado.push(accion(arr[i]));
+  }
+  return resultado;
+}
+
+function crearMultiplicador(factor) {
+  return (numero) => numero * factor;
+}
+
+function dividirSeguro(a, b) {
+  if (b === 0) {
+    throw new Error("No se puede dividir entre cero.");
+  }
+  return a / b;
+}
+
+/* Revisión 2 */
+console.log("procesarLista duplicar:", procesarLista([1, 2, 3], (n) => n * 2));
+console.log(
+  "procesarLista mayúsculas:",
+  procesarLista(["hola", "mundo"], (s) => s.toUpperCase())
+);
+
+const porTres = crearMultiplicador(3);
+console.log("porTres(10):", porTres(10));
+
+try {
+  console.log("dividirSeguro(10, 2):", dividirSeguro(10, 2));
+} catch (e) {
+  console.log("Error:", e.message);
+}
+
+try {
+  console.log("dividirSeguro(10, 0):", dividirSeguro(10, 0));
+} catch (e) {
+  console.log("Error capturado:", e.message);
+}
+
+
+/* ---------------- PARTE 3: OBJETOS ---------------- */
+
+
+const producto = {
+  nombre: "Teclado mecánico",
+  precio: 45,
+  stock: 12,
+  aplicarDescuento(porcentaje) {
+    return this.precio - (this.precio * porcentaje) / 100;
+  },
+};
+
+console.log("Descuento 20%:", producto.aplicarDescuento(20));
+console.log("Precio original:", producto.precio);
+
+const catalogo = [
+  { nombre: "Teclado", precio: 45, categoria: "periféricos", stock: 12 },
+  { nombre: "Monitor", precio: 180, categoria: "pantallas", stock: 5 },
+  { nombre: "Mouse", precio: 20, categoria: "periféricos", stock: 30 },
+  { nombre: "Silla", precio: 150, categoria: "mobiliario", stock: 0 },
+];
+
+function productosDisponibles(catalogo) {
+  return catalogo.filter(function (p) {
+    return p.stock > 0;
+  });
+}
+
+function nombresPorCategoria(catalogo, categoria) {
+  return catalogo
+    .filter(function ({ categoria: cat }) {
+      return cat === categoria;
+    })
+    .map(function ({ nombre }) {
+      return nombre;
+    });
+}
+
+function valorTotalInventario(catalogo) {
+  return catalogo.reduce(function (acc, p) {
+    return acc + p.precio * p.stock;
+  }, 0);
+}
+
+function productoMasCaro(catalogo) {
+  return catalogo.reduce(function (max, p) {
+    if (p.precio > max.precio) {
+      return p;
+    }
+    return max;
+  }, catalogo[0]);
+}
+
+console.log("Disponibles:", productosDisponibles(catalogo));
+console.log("Periféricos:", nombresPorCategoria(catalogo, "periféricos"));
+console.log("Valor inventario:", valorTotalInventario(catalogo));
+console.log("Más caro:", productoMasCaro(catalogo));
+
+/* ---------------- PARTE 4: RETO INTEGRADOR ---------------- */
+
+const ventas = [
+  { producto: "Teclado", cantidad: 3, precioUnitario: 45 },
+  { producto: "Monitor", cantidad: 1, precioUnitario: 180 },
+  { producto: "Mouse", cantidad: 5, precioUnitario: 20 },
+  { producto: "Teclado", cantidad: 2, precioUnitario: 45 },
+  { producto: "Silla", cantidad: 1, precioUnitario: 150 },
+];
+
+function generarReporte(ventas) {
+  const agrupado = ventas.reduce(function (acc, v) {
+    if (acc[v.producto] === undefined) {
+      acc[v.producto] = {
+        producto: v.producto,
+        cantidadTotal: 0,
+        ingresoTotal: 0,
+      };
+    }
+    acc[v.producto].cantidadTotal = acc[v.producto].cantidadTotal + v.cantidad;
+    acc[v.producto].ingresoTotal =
+      acc[v.producto].ingresoTotal + v.cantidad * v.precioUnitario;
+    return acc;
+  }, {});
+
+  const resumenPorProducto = Object.values(agrupado);
+
+  const totalVendido = resumenPorProducto.reduce(function (acc, p) {
+    return acc + p.ingresoTotal;
+  }, 0);
+
+  const numeroTransacciones = ventas.length;
+
+  const ordenado = [...resumenPorProducto];
+  ordenado.sort(function (a, b) {
+    return b.cantidadTotal - a.cantidadTotal;
+  });
+  const productoTopVentas = ordenado[0].producto;
+
+  return {
+    totalVendido: totalVendido,
+    numeroTransacciones: numeroTransacciones,
+    productoTopVentas: productoTopVentas,
+    resumenPorProducto: resumenPorProducto,
+  };
+}
+
+console.log(JSON.stringify(generarReporte(ventas), null, 2));
+
+/* ¿Diferencia entre map y forEach?
+   map devuelve un arreglo nuevo con cada elemento transformado.
+   forEach solo recorre y ejecuta algo, pero no devuelve nada.
+   Uso map cuando quiero transformar, y forEach cuando solo
+   quiero recorrer.
+
+¿Por qué reduce es el método "más general"?
+   Porque con reduce puedo obtener un solo valor a partir de
+   todo el arreglo: una suma, un promedio, un objeto o incluso
+   otro arreglo. Los demás métodos se pueden escribir usando
+   reduce.
+
+ Ejemplo real de arreglo de objetos:
+   Una lista de estudiantes, donde cada estudiante es un objeto
+   con nombre, carné y nota. Así puedo filtrar a los aprobados,
+   ordenarlos por nota o calcular el promedio del curso.
+
+¿Qué ventaja tiene no mutar arreglos y objetos?
+   Que el dato original no cambia, entonces otras partes del
+   programa que lo usan siguen funcionando igual y es más
+   fácil encontrar errores. */
